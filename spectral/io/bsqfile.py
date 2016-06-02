@@ -296,6 +296,7 @@ class BsqFile(SpyFile, MemmapFile):
         nSubBands = len(bands)
 
         # Pixel format is BSQ
+        index_start=0 # Add this index for arr, as bands can not start from 0, which will throw out of bounds error
         for i in bands:
             vals = array(byte_typecode)
             bandOffset = i * bandSize
@@ -308,8 +309,8 @@ class BsqFile(SpyFile, MemmapFile):
             subArray = np.fromstring(vals.tostring(),
                                      dtype=self.dtype).reshape((nSubRows,
                                                                 nSubCols))
-            arr[:, :, i] = subArray
-
+            arr[:, :, index_start] = subArray
+            index_start=index_start+1 
         if self.scale_factor != 1:
             return arr / float(self.scale_factor)
         return arr
